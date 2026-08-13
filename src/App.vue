@@ -6,36 +6,18 @@ const localPortrait = (filename) => `${publicPath}portraits/${filename}`
 
 const defaultSettings = {
   eyebrow: 'IKUN INTENSITY CALIBRATOR / VUE 3',
-  title: '坤坤历险记',
+  title: 'ikun历险记',
   intensityLabel: '坤系浓度',
   loadingLabel: '载入连续坤力…',
   hint: '拖动以增强坤系浓度',
   footer: '舞台能量协议：已启用',
   stages: [
-    { name: '练习生', image: localPortrait('00-liang.png') },
-    { name: '初舞台', image: localPortrait('01-liang.png') },
-    { name: '鸡哥', image: localPortrait('02-liang.png') },
-    { name: '顶流坤', image: localPortrait('03-liang.png') },
-    { name: '舞台王者', image: localPortrait('04-liang.png') },
-    { name: '宗主', image: localPortrait('05-liang.png') },
-  ],
-}
-
-const liangSettings = {
-  ...defaultSettings,
-  eyebrow: 'LIANG INTENSITY CALIBRATOR / VUE 3',
-  title: '滑动变祖器',
-  intensityLabel: '梁系强度',
-  loadingLabel: '载入连续祖力…',
-  hint: '拖动以增强梁系浓度',
-  footer: '正脸识别协议：已启用',
-  stages: [
-    { name: '小难梁', image: 'https://raw.githubusercontent.com/Lichtspektrum/liang-intensity-calibrator/main/public/portraits/00-laoliang.png' },
-    { name: '牢梁', image: 'https://raw.githubusercontent.com/Lichtspektrum/liang-intensity-calibrator/main/public/portraits/01-xiaoliang.png' },
-    { name: '梁子', image: 'https://raw.githubusercontent.com/Lichtspektrum/liang-intensity-calibrator/main/public/portraits/02-liangzi.png' },
-    { name: '梁圣', image: 'https://raw.githubusercontent.com/Lichtspektrum/liang-intensity-calibrator/main/public/portraits/03-liangsheng.png' },
-    { name: '梁神', image: 'https://raw.githubusercontent.com/Lichtspektrum/liang-intensity-calibrator/main/public/portraits/04-liangshen.png' },
-    { name: '梁祖', image: 'https://raw.githubusercontent.com/Lichtspektrum/liang-intensity-calibrator/main/public/portraits/05-liangzu.png' },
+    { name: '练习生', image: localPortrait('00-ikun.png') },
+    { name: '初舞台', image: localPortrait('01-ikun.png') },
+    { name: '鸡哥', image: localPortrait('02-ikun.png') },
+    { name: '顶流坤', image: localPortrait('03-ikun.png') },
+    { name: '舞台王者', image: localPortrait('04-ikun.png') },
+    { name: '宗主', image: localPortrait('05-ikun.png') },
   ],
 }
 
@@ -51,7 +33,6 @@ function loadSettings() {
 const settings = reactive(loadSettings())
 const draft = reactive(clone(settings))
 const isSettingsOpen = ref(false)
-const isProd = import.meta.env.PROD
 
 const level = ref(0)
 const loading = ref(true)
@@ -77,7 +58,6 @@ function saveSettings() {
   isSettingsOpen.value = false
 }
 function resetSettings() { Object.assign(draft, clone(defaultSettings)) }
-function useLiangSettings() { Object.assign(draft, clone(liangSettings)) }
 function closeSettings() { isSettingsOpen.value = false }
 watch(isSettingsOpen, (open) => { document.body.style.overflow = open ? 'hidden' : '' })
 </script>
@@ -135,9 +115,9 @@ watch(isSettingsOpen, (open) => { document.body.style.overflow = open ? 'hidden'
             <label>加载提示<input v-model.trim="draft.loadingLabel" maxlength="24" /></label>
             <label>滑杆提示<input v-model.trim="draft.hint" maxlength="24" /></label>
             <label>底部提示<input v-model.trim="draft.footer" maxlength="24" /></label>
-            <fieldset><legend>六个阶段</legend><div v-for="(item, index) in draft.stages" :key="index" class="stage-editor"><span>{{ String(index + 1).padStart(2, '0') }}</span><label>名称<input v-model.trim="item.name" maxlength="10" required /></label><label>图片地址<input v-model.trim="item.image" required placeholder="/portraits/00-liang.png 或 https://..." /></label><img :src="imageUrl(item.image)" alt="图片预览" /></div></fieldset>
+            <fieldset><legend>六个阶段</legend><div v-for="(item, index) in draft.stages" :key="index" class="stage-editor"><span>{{ String(index + 1).padStart(2, '0') }}</span><label>名称<input v-model.trim="item.name" maxlength="10" required /></label><label>图片地址<input v-model.trim="item.image" required placeholder="/portraits/00-ikun.png 或 https://..." /></label><img :src="imageUrl(item.image)" alt="图片预览" /></div></fieldset>
           </div>
-          <footer><div class="preset-actions"><button type="button" class="secondary-button" @click="resetSettings">恢复默认</button><button v-if="!isProd" type="button" class="secondary-button liang-button" @click="useLiangSettings">liang</button></div><div><button type="button" class="secondary-button" @click="closeSettings">取消</button><button class="primary-button" type="submit">保存设置</button></div></footer>
+          <footer><div class="preset-actions"><button type="button" class="secondary-button" @click="resetSettings">恢复默认</button></div><div><button type="button" class="secondary-button" @click="closeSettings">取消</button><button class="primary-button" type="submit">保存设置</button></div></footer>
         </form>
       </div>
     </Teleport>
