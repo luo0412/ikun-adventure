@@ -1,6 +1,9 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 
+const publicPath = import.meta.env.BASE_URL
+const localPortrait = (filename) => `${publicPath}portraits/${filename}`
+
 const defaultSettings = {
   eyebrow: 'IKUN INTENSITY CALIBRATOR / VUE 3',
   title: '坤坤历险记',
@@ -9,12 +12,12 @@ const defaultSettings = {
   hint: '拖动以增强坤系浓度',
   footer: '舞台能量协议：已启用',
   stages: [
-    { name: '练习生', image: '/portraits/00-liang.png' },
-    { name: '初舞台', image: '/portraits/01-liang.png' },
-    { name: '鸡哥', image: '/portraits/02-liang.png' },
-    { name: '顶流坤', image: '/portraits/03-liang.png' },
-    { name: '舞台王者', image: '/portraits/04-liang.png' },
-    { name: '宗主', image: '/portraits/05-liang.png' },
+    { name: '练习生', image: localPortrait('00-liang.png') },
+    { name: '初舞台', image: localPortrait('01-liang.png') },
+    { name: '鸡哥', image: localPortrait('02-liang.png') },
+    { name: '顶流坤', image: localPortrait('03-liang.png') },
+    { name: '舞台王者', image: localPortrait('04-liang.png') },
+    { name: '宗主', image: localPortrait('05-liang.png') },
   ],
 }
 
@@ -62,6 +65,9 @@ const appStyle = computed(() => ({ '--strength': intensity.value, '--blend': ble
 
 function imageLoaded() { loading.value = false }
 function imageError() { loading.value = false; loadFailed.value = true }
+function imageUrl(url) {
+  return url.startsWith('/portraits/') ? `${publicPath}${url.slice(1)}` : url
+}
 function openSettings() { Object.assign(draft, clone(settings)); isSettingsOpen.value = true }
 function saveSettings() {
   Object.assign(settings, clone(draft))
@@ -94,8 +100,8 @@ watch(isSettingsOpen, (open) => { document.body.style.overflow = open ? 'hidden'
       <p class="stage-ghost" aria-hidden="true">{{ stage }}</p>
       <div class="portrait-shell">
         <div class="imperial-halo" aria-hidden="true"></div>
-        <img class="portrait portrait-base" :src="settings.stages[stageIndex].image" :alt="`当前形态：${stage}`" @load="imageLoaded" @error="imageError" />
-        <img v-if="stageIndex < 5" class="portrait portrait-next" :src="settings.stages[nextIndex].image" alt="" aria-hidden="true" />
+        <img class="portrait portrait-base" :src="imageUrl(settings.stages[stageIndex].image)" :alt="`当前形态：${stage}`" @load="imageLoaded" @error="imageError" />
+        <img v-if="stageIndex < 5" class="portrait portrait-next" :src="imageUrl(settings.stages[nextIndex].image)" alt="" aria-hidden="true" />
         <div class="scan-grid" aria-hidden="true"></div>
         <i v-for="corner in ['tl', 'tr', 'bl', 'br']" :key="corner" class="frame-corner" :class="`frame-corner--${corner}`" aria-hidden="true"></i>
         <div v-if="loading || loadFailed" class="load-state" :class="{ error: loadFailed }">{{ loadFailed ? '图像加载失败，请检查网络' : settings.loadingLabel }}</div>
@@ -129,7 +135,7 @@ watch(isSettingsOpen, (open) => { document.body.style.overflow = open ? 'hidden'
             <label>加载提示<input v-model.trim="draft.loadingLabel" maxlength="24" /></label>
             <label>滑杆提示<input v-model.trim="draft.hint" maxlength="24" /></label>
             <label>底部提示<input v-model.trim="draft.footer" maxlength="24" /></label>
-            <fieldset><legend>六个阶段</legend><div v-for="(item, index) in draft.stages" :key="index" class="stage-editor"><span>{{ String(index + 1).padStart(2, '0') }}</span><label>名称<input v-model.trim="item.name" maxlength="10" required /></label><label>图片地址<input v-model.trim="item.image" required placeholder="/portraits/00-liang.png 或 https://..." /></label><img :src="item.image" alt="图片预览" /></div></fieldset>
+            <fieldset><legend>六个阶段</legend><div v-for="(item, index) in draft.stages" :key="index" class="stage-editor"><span>{{ String(index + 1).padStart(2, '0') }}</span><label>名称<input v-model.trim="item.name" maxlength="10" required /></label><label>图片地址<input v-model.trim="item.image" required placeholder="/portraits/00-liang.png 或 https://..." /></label><img :src="imageUrl(item.image)" alt="图片预览" /></div></fieldset>
           </div>
           <footer><div class="preset-actions"><button type="button" class="secondary-button" @click="resetSettings">恢复默认</button><button v-if="!isProd" type="button" class="secondary-button liang-button" @click="useLiangSettings">liang</button></div><div><button type="button" class="secondary-button" @click="closeSettings">取消</button><button class="primary-button" type="submit">保存设置</button></div></footer>
         </form>
